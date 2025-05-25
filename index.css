@@ -38,9 +38,11 @@ body {
 
 /* === Typography === */
 
-h1 {
+h1, h2 {
     margin: 0;
 }
+
+ 
 
 .app-title {
     font-family: var(--seconday-font);
@@ -76,6 +78,10 @@ section {
     border: var(--border-width) solid var(--dark-color);
 }
 
+.user-section h2 {
+    font-size: 1.2em;
+}
+
 /* === Nav === */
 
 nav {
@@ -102,7 +108,7 @@ nav {
 .app-container {
     display: flex;
     flex-direction: column;
-    gap: 3em;
+    gap: 1em;
 }
 
 /* === Common for elements === */
@@ -214,4 +220,11 @@ button:hover {
 #logged-in-view {
     display: none;
     margin: 0;
+}
+
+/* ==== toggle Update ===== */
+
+#update-profile-form input,
+#update-profile-form button {
+  margin-top: 0.5em;
 }

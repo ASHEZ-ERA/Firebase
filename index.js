@@ -10,13 +10,14 @@ import {
   onAuthStateChanged,
   GoogleAuthProvider,
   signInWithPopup,
+  updateProfile,
 } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyArwYLLKEYLHLBG8P4pTAN416lmpoyZdic",
   authDomain: "moody-3d6dc.firebaseapp.com",
   projectId: "moody-3d6dc",
-  storageBucket: "moody-3d6dc.firebasestorage.app",
+  storageBucket: "moody-3d6dc.appspot.com",
   messagingSenderId: "376908512081",
   appId: "1:376908512081:web:5dd624a03fe24a5da33170",
 };
@@ -29,6 +30,9 @@ const auth = getAuth(app);
 
 //initialize googleSignIn
 const provider = new GoogleAuthProvider();
+
+// authorise the currentUser
+const user = auth.currentUser;
 
 /* === UI === */
 
@@ -49,6 +53,13 @@ const createAccountButtonEl = document.getElementById("create-account-btn");
 
 const signOutButtonEl = document.getElementById("sign-out-btn");
 
+const userProfilePictureEl = document.getElementById("user-profile-picture");
+const userGreetingEl = document.getElementById("user-greeting");
+
+const displayNameInputEl = document.getElementById("display-name-input");
+const photoURLInputEl = document.getElementById("photo-url-input");
+const updateProfileButtonEl = document.getElementById("update-profile-btn");
+
 /* == UI - Event Listeners == */
 
 signInWithGoogleButtonEl.addEventListener("click", authSignInWithGoogle);
@@ -58,11 +69,15 @@ createAccountButtonEl.addEventListener("click", authCreateAccountWithEmail);
 
 signOutButtonEl.addEventListener("click", authSignOut);
 
+updateProfileButtonEl.addEventListener("click", authUpdateProfile);
+
 /* === Main Code === */
 
 onAuthStateChanged(auth, (user) => {
   if (user) {
     showLoggedInView();
+    showProfilePicture(userProfilePictureEl, user);
+    showUserGreeting(userGreetingEl, user);
   } else {
     showLoggedOutView();
   }
@@ -119,6 +134,22 @@ function authSignOut() {
     });
 }
 
+function authUpdateProfile() {
+  const newDisplayName = displayNameInputEl.value;
+  const newProfileURL = photoURLInputEl.value;
+
+  updateProfile(auth.currentUser, {
+    displayName: newDisplayName,
+    photoURL:newProfileURL,
+  })
+    .then(() => {
+      console.log("profile updated");
+    })
+    .catch((error) => {
+      console.error(error.message);
+    });
+}
+
 /* == Functions - UI Functions == */
 
 function showLoggedOutView() {
@@ -146,4 +177,23 @@ function clearInputField(field) {
 function clearAuthFields() {
   clearInputField(emailInputEl);
   clearInputField(passwordInputEl);
+}
+
+function showProfilePicture(imgElement, user) {
+  const photoURL = user.photoURL;
+  if (photoURL) {
+    imgElement.src = photoURL;
+  } else {
+    imgElement.src = "/images/signedINView.jpg";
+  }
+}
+
+function showUserGreeting(element, user) {
+  const displayName = user.displayName;
+  if (displayName) {
+    const userFirstName = displayName.split(" ")[0];
+    element.textContent = `Hey ${userFirstName}, How are you`;
+  } else {
+    element.textContent = `Hey Friend, How are you`;
+  }
 }
